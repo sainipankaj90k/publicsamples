@@ -20,6 +20,6 @@ $storageAccountDetail = New-AzStorageAccount -ResourceGroupName ${Env:ResourceGr
 $DeploymentScriptOutputs['storageAccountDetail'] = $storageAccountDetail;
 
 
-$storageAccountDetail = New-AzKeyVault -ResourceGroupName ${Env:ResourceGroupName} -Name ${Env:KeyVaultName} -Location westus;
-$DeploymentScriptOutputs['storageAccountDetail'] = $storageAccountDetail;
+$keyVaultDetail = New-AzKeyVault -ResourceGroupName ${Env:ResourceGroupName} -Name ${Env:KeyVaultName} -Location westus;
+$DeploymentScriptOutputs['keyVaultDetail'] = $keyVaultDetail;
 
