@@ -12,7 +12,9 @@ $subId = $azCtx.Subscription.Id
 
 Write-Host $subId
 
+$DeploymentScriptOutputs['subId'] = $subId;
+
 Select-AzSubscription -Subscription $subId
 
 $abc = New-AzStorageAccount -ResourceGroupName ${Env:UserName} -Name ${Env:StorageName} -Location westus -SkuName Standard_GRS;
-$DeploymentScriptOutputs['text2'] = $abc;
+$DeploymentScriptOutputs['storageAccountDetail'] = $abc;
