@@ -52,7 +52,6 @@
 			"name": "[parameters('deploymentScriptsName')]",
 			"location": "[resourceGroup().location]",
 			"dependsOn": [
-				"[resourceId('Microsoft.Authorization/roleAssignments', variables('bootstrapRoleAssignmentId'))]"
 			],
 			"kind": "AzureCLI",
 			"identity": {
