@@ -1,0 +1,105 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"storageAccountName": {
+			"defaultValue": "pasainidepscript9sa",
+			"type": "String"
+		},
+		"keyVaultName": {
+			"defaultValue": "pasainidepscript9kv",
+			"type": "String"
+		},
+		"msi_name_prefix": {
+			"defaultValue": "msi_name9",
+			"type": "String"
+		},
+		"resourceGroupName": {
+			"defaultValue": "[resourceGroup().name]",
+			"type": "String"
+		},
+		"location": {
+			"defaultValue": "[resourceGroup().location]",
+			"type": "String"
+		},
+		"deploymentScriptsName": {
+			"defaultValue": "runPowerShellInlineAzScriptUri1msi8",
+			"type": "String"
+		},
+		"scriptUri": {
+			"defaultValue": "https://raw.githubusercontent.com/sainipankaj90k/publicsamples/main/AddStorageAccount_DeploymentScriptV3.ps1",
+			"type": "String"
+		},
+		"utcValue": {
+			"type": "string",
+			"defaultValue": "[utcNow()]"
+		}
+	},
+	"variables": {
+		"identityName": "[concat(parameters('msi_name_prefix'), '-deploymentScripts')]",
+		"dataActionOnlyRoleName": "DataActionOnlyRole",
+		"roleDefDeploymentScriptId": "[guid(concat(resourceGroup().id, variables('dataActionOnlyRoleName')))]",
+		"bootstrapRoleAssignmentId": "[guid(concat(resourceGroup().id, variables('identityName'), 'contributor'))]",
+		"contributorRoleDefinitionId": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+		"Owner": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', '8e3af657-a8ff-443c-a75c-2fe8c4bcb635')]",
+		"Contributor": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'b24988ac-6180-42a0-ab88-20f7382dd24c')]",
+		"Reader": "[concat('/subscriptions/', subscription().subscriptionId, '/providers/Microsoft.Authorization/roleDefinitions/', 'acdd72a7-3385-48ef-bd42-f606fba81ae7')]"
+	},
+	"resources": [
+		{
+			"type": "Microsoft.Resources/deploymentScripts",
+			"apiVersion": "2020-10-01",
+			"name": "[parameters('deploymentScriptsName')]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [
+				"[resourceId('Microsoft.Authorization/roleAssignments', variables('bootstrapRoleAssignmentId'))]"
+			],
+			"kind": "AzureCLI",
+			"identity": {
+				"type": "userAssigned",
+				"userAssignedIdentities": {
+					"[resourceId('Microsoft.ManagedIdentity/userAssignedIdentities', variables('identityName'))]": {}
+				}
+			},
+			"properties": {
+				"forceUpdateTag": "[parameters('utcValue')]",
+				"containerSettings": {},
+				"azCliVersion": "2.40.0",
+				"arguments": "-name \\\"John Dole\\\"",
+				"environmentVariables": [
+					{
+						"name": "ResourceGroupName",
+						"value": "[parameters('resourceGroupName')]"
+					},
+					{
+						"name": "StorageName",
+						"value": "[parameters('storageAccountName')]"
+					},
+					{
+						"name": "KeyVaultName",
+						"value": "[parameters('keyVaultName')]"
+					},
+					{
+						"name": "Location",
+						"value": "[parameters('location')]"
+					}
+				],
+				"primaryScriptUri": "[parameters('scriptUri')]",
+				"supportingScriptUris": [],
+				"timeout": "PT30M",
+				"cleanupPreference": "Always",
+				"retentionInterval": "P1D"
+			}
+		}
+	],
+	"outputs": {
+		"ResourceGroupName": {
+			"type": "String",
+			"value": "[reference(parameters('deploymentScriptsName')).outputs.ResourceGroupName]"
+		},
+		"Location": {
+			"type": "String",
+			"value": "[reference(parameters('deploymentScriptsName')).outputs.Location]"
+		}
+	}
+}
