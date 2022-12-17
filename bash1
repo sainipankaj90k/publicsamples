@@ -1,6 +1,11 @@
 #!/bin/bash
 
-echo -e "before-starting script"
+echo -e "before-starting script $1"
+input=$1
+
+echo -e "input = $input"
+
+echo -e "$(($input | jq -c '{Result: map({id: .id})}'))"
 
 json_data='{key:"value"}'
 echo -e $json_data
