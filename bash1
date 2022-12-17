@@ -3,12 +3,14 @@
 echo -e "before-starting script"
 
 json_data='{key:"value"}'
-echo "$((jq -n "$json_data" | jq .key))"
+echo -e $json_data
+echo -e "$((jq -n "$json_data" | jq .key))"
 
 echo -e "starting script"
 
 json_data2=$1
-echo "$((jq -n "$json_data2" | jq .[0]))"
+echo -e $json_data2
+echo -e "$((jq -n "$json_data2" | jq .[0]))"
 
 echo -e "ending script"
 
