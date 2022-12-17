@@ -12,6 +12,15 @@ json_data2=$1
 echo -e $json_data2
 echo -e "$((jq -n "$json_data2" | jq .[0]))"
 
+echo -e "before ending script"
+
+result=$(az deployment-scripts list);
+ echo \"arg1 is: $1\";
+ echo \"arg2 is: $2\";
+ echo \"Username is: $UserName\";
+ echo \"password is: $Password\";
+ echo $result | jq -c '{Result: map({id: .id})}' > $AZ_SCRIPTS_OUTPUT_PATH
+
 echo -e "ending script"
 
 
