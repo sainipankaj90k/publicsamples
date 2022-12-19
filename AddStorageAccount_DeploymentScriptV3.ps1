@@ -1,26 +1,12 @@
 $DeploymentScriptOutputs = @{};
 
-$DeploymentScriptOutputs['ResourceGroupName'] = ${Env:ResourceGroupName};
-$DeploymentScriptOutputs['StorageName'] = ${Env:StorageName};
-$DeploymentScriptOutputs['KeyVaultName'] = ${Env:KeyVaultName};
-$DeploymentScriptOutputs['Location'] = ${Env:Location};
+$res = Get-AzResource -ResourceType Microsoft.Resources/deploymentScripts
 
-$azCtx = Get-AzContext
-$azCtx
+$resourceIds = $res | Select-Object ResourceId | ConvertTo-Json
 
-$subId = $azCtx.Subscription.Id
+Write-Host $resourceIds
 
-Write-Host $subId
-
-$DeploymentScriptOutputs['subId'] = $subId;
-
-Select-AzSubscription -Subscription $subId
-
-$storageAccountDetail = New-AzStorageAccount -ResourceGroupName ${Env:ResourceGroupName} -Name ${Env:StorageName} -Location westus -SkuName Standard_GRS;
-$DeploymentScriptOutputs['storageAccountDetail'] = $storageAccountDetail;
-
-
-$keyVaultDetail = New-AzKeyVault -ResourceGroupName ${Env:ResourceGroupName} -Name ${Env:KeyVaultName} -Location westus;
-$DeploymentScriptOutputs['keyVaultDetail'] = $keyVaultDetail;
+$DeploymentScriptOutputs = @{};
+$DeploymentScriptOutputs['deploymentScriptsIds'] = $resourceIds;
 
 $DeploymentScriptOutputs['ScriptResult'] = 'Succeeded';
