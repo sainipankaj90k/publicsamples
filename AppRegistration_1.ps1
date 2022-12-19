@@ -2,9 +2,9 @@ $appName = ${Env:AppName};
 $appURI = ${Env:AppUri};
 $appHomePageUrl = ${Env:AppHomePageUrl};
 $appReplyURLs = @($appURI, $appHomePageURL, "https://localhost:1234")
-if(!($myApp = Get-AzureADApplication -Filter "DisplayName eq '$($appName)'"  -ErrorAction SilentlyContinue))
+if(!($myApp = Get-AzADApplication -Filter "DisplayName eq '$($appName)'"  -ErrorAction SilentlyContinue))
 {
-    $myApp = New-AzureADApplication -DisplayName $appName -IdentifierUris $appURI -Homepage $appHomePageUrl -ReplyUrls $appReplyURLs    
+    $myApp = New-AzADApplication -DisplayName $appName -IdentifierUris $appURI -Homepage $appHomePageUrl -ReplyUrls $appReplyURLs    
 }
 
 
