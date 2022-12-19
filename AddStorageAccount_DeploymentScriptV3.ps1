@@ -23,3 +23,4 @@ $DeploymentScriptOutputs['storageAccountDetail'] = $storageAccountDetail;
 $keyVaultDetail = New-AzKeyVault -ResourceGroupName ${Env:ResourceGroupName} -Name ${Env:KeyVaultName} -Location westus;
 $DeploymentScriptOutputs['keyVaultDetail'] = $keyVaultDetail;
 
+$DeploymentScriptOutputs['ScriptResult'] = 'Succeeded';
