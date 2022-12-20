@@ -1,0 +1,101 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"kind": {
+			"defaultValue": "AzurePowerShell",
+			"allowedValues": [
+				"AzurePowerShell",
+				"AzureCLI"
+			],
+			"type": "String"
+		},
+		"version": {
+			"defaultValue": "8.3",
+			"type": "String"
+		},
+		"arguments": {
+			"defaultValue": "",
+			"type": "String"
+		},
+		"environmentVariables": {
+			"defaultValue": [],
+			"type": "Array"
+		},
+		"deploymentScriptsNamePrefix": {
+			"defaultValue": "[concat('ps1-', newGuid())]",
+			"type": "String"
+		},
+		"timeout": {
+			"defaultValue": "PT30M",
+			"type": "String"
+		},
+		"retentionInterval": {
+			"defaultValue": "P1D",
+			"type": "String"
+		},
+		"primaryScriptUri": {
+			"defaultValue": "https://raw.githubusercontent.com/sainipankaj90k/publicsamples/main/powershell1.ps1",
+			"type": "String"
+		},
+		"supportingScriptUris": {
+			"defaultValue": [],
+			"type": "Array"
+		},
+		"forceUpdateTag": {
+			"defaultValue": "[utcNow()]",
+			"type": "String"
+		},
+		"cleanupPreference": {
+			"defaultValue": "Always",
+			"allowedValues": [
+				"Always",
+				"OnSuccess",
+				"OnExpiration"
+			],
+			"type": "String"
+		},
+		"identityForScript": {
+			"defaultValue": "/subscriptions/56951e4c-2008-4bca-88ba-d2d2eab9fede/resourceGroups/pasainiDepScript02/providers/Microsoft.ManagedIdentity/userAssignedIdentities/deploymentScripts-bc7e3c2f-ebfd-5696-94bb-0253fea60336",
+			"type": "String"
+		}
+	},
+	"variables": {
+		"deploymentScriptsName": "[concat(parameters('deploymentScriptsNamePrefix'), guid(resourceGroup().id))]"
+	},
+	"resources": [
+		{
+			"type": "Microsoft.Resources/deploymentScripts",
+			"apiVersion": "2020-10-01",
+			"name": "[variables('deploymentScriptsName')]",
+			"location": "[resourceGroup().location]",
+			"dependsOn": [],
+			"kind": "[parameters('kind')]",
+			"identity": {
+				"type": "userAssigned",
+				"userAssignedIdentities": {
+					"[parameters('identityForScript')]": {}
+				}
+			},
+			"properties": {
+				"forceUpdateTag": "[parameters('forceUpdateTag')]",
+				"containerSettings": {},
+				"azCliVersion": "[if(equals(parameters('kind'),'AzureCLI'), parameters('version'), json('null'))]",
+				"azPowerShellVersion": "[if(equals(parameters('kind'),'AzurePowerShell'),parameters('version'), json('null'))]",
+				"arguments": "[parameters('arguments')]",
+				"environmentVariables": "[parameters('environmentVariables')]",
+				"primaryScriptUri": "[parameters('primaryScriptUri')]",
+				"supportingScriptUris": "[parameters('supportingScriptUris')]",
+				"timeout": "[parameters('timeout')]",
+				"cleanupPreference": "[parameters('cleanupPreference')]",
+				"retentionInterval": "[parameters('retentionInterval')]"
+			}
+		}
+	],
+	"outputs": {
+		"deploymentScriptResource": {
+			"type": "Object",
+			"value": "[reference(resourceId('Microsoft.Resources/deploymentScripts', variables('deploymentScriptsName')), '2020-10-01', 'Full')]"
+		}
+	}
+}
